@@ -1,8 +1,0 @@
-rootProject.name = 'fraud-trace-cordapp'
-
-include 'contracts'
-include 'workflows'
-
-project(':contracts').projectDir = file('contracts')
-project(':workflows').projectDir = file('workflows')
-
