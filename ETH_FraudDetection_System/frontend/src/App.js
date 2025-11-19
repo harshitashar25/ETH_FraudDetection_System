@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import React, { useEffect, useState } from 'react';
 
 // Import Components
-import HomePage from './components/HomePage';
-import LeaDashboard from './LeaDashboard';
 import BankA_UI from './BankA_UI';
 import BankB_UI from './BankB_UI';
-import BlockchainMonitorDashboard from './components/BlockchainMonitorDashboard';
-import TransactionIntelligence from './components/TransactionIntelligence';
-import Sidebar from './components/Sidebar';
+import EvidenceDashboard from './components/EvidenceDashboard';
+import HomePage from './components/HomePage';
 import OSINTPlaceholder from './components/OSINTPlaceholder';
+import Sidebar from './components/Sidebar';
+import TransactionIntelligence from './components/TransactionIntelligence';
+import LeaDashboard from './LeaDashboard';
 
 // Import ABI (JSON file is created by Hardhat compile)
-import FraudLedgerABI from './FraudLedger.json'; 
+import FraudLedgerABI from './FraudLedger.json';
 
 // IMPORTANT: Replace this with the address printed by Hardhat's deploy script!
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; 
@@ -94,6 +94,11 @@ function App() {
     // OSINT View
     if (view === 'osint') {
       return <OSINTPlaceholder />;
+    }
+
+    // Evidence Hashing View
+    if (view === 'evidence-hashing') {
+      return <EvidenceDashboard />;
     }
 
     // Wallet Intelligence View (Transaction Intelligence with Moralis)

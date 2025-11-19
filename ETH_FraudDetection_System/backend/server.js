@@ -3,6 +3,7 @@ const cors = require('cors');
 const http = require('http');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const WalletTracker = require('./services/walletTracker');
@@ -15,6 +16,8 @@ const webhookRoutes = require('./routes/webhooks');
 const blockchainRoutes = require('./routes/blockchain');
 const trailRoutes = require('./routes/trail');
 const intelligenceRoutes = require('./routes/intelligence');
+const evidenceRoutes = require('./routes/evidence');
+const bankRoutes = require('./routes/bank');
 
 const app = express();
 const server = http.createServer(app);
@@ -26,7 +29,8 @@ const wss = new WebSocket.Server({ server });
 const clients = new Set();
 
 // Initialize wallet tracker
-const rpcUrl = process.env.ETHEREUM_RPC_URL || 'https://eth.llamarpc.com';
+// Using public Ethereum RPC endpoints (llamarpc.com is blocked by Cloudflare)
+const rpcUrl = process.env.ETHEREUM_RPC_URL || 'https://rpc.ankr.com/eth';
 const wsUrl = process.env.ETHEREUM_WS_URL || null;
 const chainName = process.env.CHAIN_NAME || 'ethereum';
 
@@ -115,6 +119,8 @@ app.use('/api/webhooks', webhookRoutes.router);
 app.use('/api/blockchain', blockchainRoutes.router);
 app.use('/api/trail', trailRoutes.router);
 app.use('/api/intelligence', intelligenceRoutes.router);
+app.use('/api/evidence', evidenceRoutes);
+app.use('/api/bank', bankRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -152,6 +158,16 @@ async function start() {
     console.log(`📍 Chain: ${chainName}`);
     console.log(`🔗 RPC URL: ${rpcUrl}`);
     console.log(`🔌 WebSocket: ${wsUrl ? 'Enabled' : 'Disabled (using polling)'}`);
+    
+    // Connect to MongoDB
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/fraud-detection';
+    try {
+      await mongoose.connect(mongoUri);
+      console.log('✅ Connected to MongoDB:', mongoUri);
+    } catch (mongoError) {
+      console.warn('⚠️  MongoDB connection failed:', mongoError.message);
+      console.warn('   Continuing without MongoDB (evidence uploads will fail without MongoDB)');
+    }
     
     // Create wallet tracker
     walletTracker = new WalletTracker(rpcUrl, wsUrl, chainName);

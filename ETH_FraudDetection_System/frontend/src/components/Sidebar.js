@@ -21,6 +21,11 @@ const Sidebar = ({ activeView, onNavigate }) => {
 
   const actionsItems = [
     {
+      id: 'evidence-hashing',
+      label: 'Evidence Hashing',
+      icon: '📄'
+    },
+    {
       id: 'osint',
       label: 'OSINT Analysis',
       icon: '🔍'
